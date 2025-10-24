@@ -1,9 +1,12 @@
 package main
 
+import "carte/ui"
+
 type App struct {
-	Mode int
-	X    int
-	Y    int
+	Mode   int
+	X      int
+	Y      int
+	Button *ui.Button
 }
 
 type Settings struct {
