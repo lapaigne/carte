@@ -36,11 +36,17 @@ func main() {
 
 	app := App{Button: b}
 
+	ms := []*ebiten.MonitorType{}
+	ms = ebiten.AppendMonitors(ms)
+
 	settings := Settings{
-		Width:  1280,
-		Height: 720,
-		Title:  "La Carte",
+		Width:   1280,
+		Height:  720,
+		Title:   "La Carte",
+		Monitor: ms[0],
 	}
+
+	ebiten.SetMonitor(settings.Monitor)
 
 	ebiten.SetWindowSize(settings.Width, settings.Height)
 	ebiten.SetWindowTitle(settings.Title)

@@ -1,6 +1,10 @@
 package main
 
-import "carte/ui"
+import (
+	"carte/ui"
+
+	"github.com/hajimehoshi/ebiten/v2"
+)
 
 type App struct {
 	Mode   int
@@ -10,7 +14,8 @@ type App struct {
 }
 
 type Settings struct {
-	Width  int
-	Height int
-	Title  string
+	Width   int
+	Height  int
+	Title   string
+	Monitor *ebiten.MonitorType
 }
