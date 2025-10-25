@@ -28,8 +28,7 @@ func (a *App) Layout(outW, outH int) (int, int) {
 }
 
 func (a *App) Draw(screen *ebiten.Image) {
-	a.Button.Init()
-	a.Button.Draw(screen, gtfs)
+	a.Button.Draw(screen)
 }
 
 func main() {
@@ -53,8 +52,10 @@ func main() {
 		Monitor: ms[0],
 	}
 
-	ebiten.SetMonitor(settings.Monitor)
+	b.Init(gtfs)
+	b.CenterHor(settings.Width)
 
+	ebiten.SetMonitor(settings.Monitor)
 	ebiten.SetWindowSize(settings.Width, settings.Height)
 	ebiten.SetWindowTitle(settings.Title)
 	if err := ebiten.RunGame(&app); err != nil {

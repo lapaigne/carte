@@ -18,44 +18,60 @@ const (
 )
 
 type Button struct {
-	X int
-	Y int
-	w int
-	h int
+	X      int
+	Y      int
+	Width  int
+	Height int
 
 	Text       string
 	LayoutOpts *text.LayoutOptions
 	DrawOpts   *text.DrawOptions
 	State      ButtonState
 	Margin     int
+	TextFace   *text.GoTextFace
 }
 
-func (b *Button) Init() {
+func (b *Button) Init(source *text.GoTextFaceSource) {
 	draw := &text.DrawOptions{}
 	draw.ColorScale.ScaleWithColor(color.White)
 	draw.GeoM.Translate(float64(b.X+b.Margin), float64(b.Y+b.Margin))
 	draw.Filter = ebiten.FilterNearest
 	b.DrawOpts = draw
+
+	tf := &text.GoTextFace{
+		Source: source,
+		Size:   24,
+	}
+
+	b.TextFace = tf
+
+	w, h := text.Measure(b.Text, b.TextFace, b.DrawOpts.LineSpacing)
+	b.Width = int(w) + 2*b.Margin
+	b.Height = int(h) + 2*b.Margin
+}
+
+func (b *Button) CenterVer(height int) {
+	b.Y = height/2 - b.Height/2
+	b.DrawOpts.GeoM.Reset()
+	b.DrawOpts.GeoM.Translate(float64(b.X+b.Margin), float64(b.Y+b.Margin))
+}
+
+func (b *Button) CenterHor(width int) {
+	b.X = width/2 - b.Width/2
+	b.DrawOpts.GeoM.Reset()
+	b.DrawOpts.GeoM.Translate(float64(b.X+b.Margin), float64(b.Y+b.Margin))
 }
 
 func (b *Button) Click() {
 	fmt.Println("clicked")
 }
 
-func (b *Button) Draw(screen *ebiten.Image, source *text.GoTextFaceSource) {
-	tf := &text.GoTextFace{
-		Source: source,
-		Size:   24,
-	}
-	w, h := text.Measure(b.Text, tf, b.DrawOpts.LineSpacing)
+func (b *Button) Draw(screen *ebiten.Image) {
 
-	b.w = int(w) + 2*b.Margin
-	b.h = int(h) + 2*b.Margin
-
-	text.Draw(screen, b.Text, tf, b.DrawOpts)
-	vector.StrokeRect(screen, float32(b.X), float32(b.Y), float32(b.w), float32(b.h), 1, color.White, false)
+	text.Draw(screen, b.Text, b.TextFace, b.DrawOpts)
+	vector.StrokeRect(screen, float32(b.X), float32(b.Y), float32(b.Width), float32(b.Height), 1, color.White, false)
 }
 
 func (b *Button) In(x, y int) bool {
-	return x >= b.X && x <= b.w+b.X && y >= b.Y && y <= b.h+b.Y
+	return x >= b.X && x <= b.Width+b.X && y >= b.Y && y <= b.Height+b.Y
 }
