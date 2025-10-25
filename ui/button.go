@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"fmt"
 	"image/color"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -37,14 +38,24 @@ func (b *Button) Init() {
 	b.DrawOpts = draw
 }
 
-func (b *Button) Click() {}
+func (b *Button) Click() {
+	fmt.Println("clicked")
+}
 
 func (b *Button) Draw(screen *ebiten.Image, source *text.GoTextFaceSource) {
 	tf := &text.GoTextFace{
 		Source: source,
 		Size:   24,
 	}
-	text.Draw(screen, b.Text, tf, b.DrawOpts)
 	w, h := text.Measure(b.Text, tf, b.DrawOpts.LineSpacing)
-	vector.StrokeRect(screen, float32(b.X), float32(b.Y), float32(w)+float32(2*b.Margin), float32(h)+float32(2*b.Margin), 1, color.White, false)
+
+	b.w = int(w) + 2*b.Margin
+	b.h = int(h) + 2*b.Margin
+
+	text.Draw(screen, b.Text, tf, b.DrawOpts)
+	vector.StrokeRect(screen, float32(b.X), float32(b.Y), float32(b.w), float32(b.h), 1, color.White, false)
+}
+
+func (b *Button) In(x, y int) bool {
+	return x >= b.X && x <= b.w+b.X && y >= b.Y && y <= b.h+b.Y
 }
