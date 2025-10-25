@@ -23,6 +23,8 @@ type Button struct {
 	Width  int
 	Height int
 
+	LockWidth  bool
+	LockHeight bool
 	Text       string
 	LayoutOpts *text.LayoutOptions
 	DrawOpts   *text.DrawOptions
@@ -31,10 +33,29 @@ type Button struct {
 	TextFace   *text.GoTextFace
 }
 
+func (b *Button) adjust() {
+	_ftw, _fth := text.Measure(b.Text, b.TextFace, b.DrawOpts.LineSpacing)
+	tw, th := int(_ftw), int(_fth)
+	w, h := b.Width, b.Height
+
+	b.DrawOpts.GeoM.Reset()
+	b.DrawOpts.GeoM.Translate(
+		float64(b.X+(w-tw)/2),
+		float64(b.Y+(h-th)/2),
+	)
+
+	if !b.LockHeight {
+		b.Height = 2*b.Margin + th
+	}
+
+	if !b.LockWidth {
+		b.Width = 2*b.Margin + tw
+	}
+}
+
 func (b *Button) Init(source *text.GoTextFaceSource) {
 	draw := &text.DrawOptions{}
 	draw.ColorScale.ScaleWithColor(color.White)
-	draw.GeoM.Translate(float64(b.X+b.Margin), float64(b.Y+b.Margin))
 	draw.Filter = ebiten.FilterNearest
 	b.DrawOpts = draw
 
@@ -44,22 +65,17 @@ func (b *Button) Init(source *text.GoTextFaceSource) {
 	}
 
 	b.TextFace = tf
-
-	w, h := text.Measure(b.Text, b.TextFace, b.DrawOpts.LineSpacing)
-	b.Width = int(w) + 2*b.Margin
-	b.Height = int(h) + 2*b.Margin
+	b.adjust()
 }
 
 func (b *Button) CenterVer(height int) {
 	b.Y = height/2 - b.Height/2
-	b.DrawOpts.GeoM.Reset()
-	b.DrawOpts.GeoM.Translate(float64(b.X+b.Margin), float64(b.Y+b.Margin))
+	b.adjust()
 }
 
 func (b *Button) CenterHor(width int) {
 	b.X = width/2 - b.Width/2
-	b.DrawOpts.GeoM.Reset()
-	b.DrawOpts.GeoM.Translate(float64(b.X+b.Margin), float64(b.Y+b.Margin))
+	b.adjust()
 }
 
 func (b *Button) Click() {
@@ -67,7 +83,6 @@ func (b *Button) Click() {
 }
 
 func (b *Button) Draw(screen *ebiten.Image) {
-
 	text.Draw(screen, b.Text, b.TextFace, b.DrawOpts)
 	vector.StrokeRect(screen, float32(b.X), float32(b.Y), float32(b.Width), float32(b.Height), 1, color.White, false)
 }

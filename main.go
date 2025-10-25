@@ -38,7 +38,14 @@ func main() {
 	}
 	gtfs = s
 
-	b := &ui.Button{X: 100, Y: 120, Text: "BUTTON", Margin: 10}
+	b := &ui.Button{
+		X:         100,
+		Y:         120,
+		Text:      "BUTTON",
+		Margin:    10,
+		Width:     400,
+		LockWidth: true,
+	}
 
 	app := App{Button: b}
 
