@@ -46,10 +46,14 @@ func (b *Button) adjust() {
 
 	if !b.LockHeight {
 		b.Height = 2*b.Margin + th
+		b.LockHeight = true
+		b.adjust()
 	}
 
 	if !b.LockWidth {
 		b.Width = 2*b.Margin + tw
+		b.LockWidth = true
+		b.adjust()
 	}
 }
 
@@ -65,7 +69,6 @@ func (b *Button) Init(source *text.GoTextFaceSource) {
 	}
 
 	b.TextFace = tf
-	b.adjust()
 }
 
 func (b *Button) CenterVer(height int) {
@@ -79,7 +82,7 @@ func (b *Button) CenterHor(width int) {
 }
 
 func (b *Button) Click() {
-	fmt.Println("clicked")
+	fmt.Printf("clicked: %s\n", b.Text)
 }
 
 func (b *Button) Draw(screen *ebiten.Image) {
@@ -89,4 +92,9 @@ func (b *Button) Draw(screen *ebiten.Image) {
 
 func (b *Button) In(x, y int) bool {
 	return x >= b.X && x <= b.Width+b.X && y >= b.Y && y <= b.Height+b.Y
+}
+
+func (b *Button) MinDims() (int, int) {
+	_w, _h := text.Measure(b.Text, b.TextFace, b.DrawOpts.LineSpacing)
+	return b.Margin + int(_w), b.Margin + int(_h)
 }

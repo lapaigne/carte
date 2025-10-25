@@ -15,8 +15,10 @@ var gtfs *text.GoTextFaceSource
 
 func (a *App) Update() error {
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
-		if a.Button.In(ebiten.CursorPosition()) {
-			a.Button.Click()
+		for _, btn := range a.Menu.Buttons {
+			if btn.In(ebiten.CursorPosition()) {
+				btn.Click()
+			}
 		}
 	}
 
@@ -28,7 +30,9 @@ func (a *App) Layout(outW, outH int) (int, int) {
 }
 
 func (a *App) Draw(screen *ebiten.Image) {
-	a.Button.Draw(screen)
+	for _, btn := range a.Menu.Buttons {
+		btn.Draw(screen)
+	}
 }
 
 func main() {
@@ -58,6 +62,8 @@ func main() {
 		Title:   "La Carte",
 		Monitor: ms[0],
 	}
+
+	app.Menu = ui.NewMenu(s, settings.Width, settings.Height)
 
 	b.Init(gtfs)
 	b.CenterHor(settings.Width)

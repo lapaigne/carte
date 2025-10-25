@@ -7,6 +7,7 @@ import (
 )
 
 type App struct {
+	Menu   *ui.Menu
 	Mode   int
 	X      int
 	Y      int
