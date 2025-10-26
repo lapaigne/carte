@@ -1,7 +1,6 @@
 package ui
 
 import (
-	"fmt"
 	"image/color"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -10,6 +9,7 @@ import (
 )
 
 type ButtonState int
+type OnClickFunc func()
 
 const (
 	Disabled ButtonState = iota - 1
@@ -22,6 +22,8 @@ type Button struct {
 	Y      int
 	Width  int
 	Height int
+
+	Click OnClickFunc
 
 	LockWidth  bool
 	LockHeight bool
@@ -46,14 +48,10 @@ func (b *Button) adjust() {
 
 	if !b.LockHeight {
 		b.Height = 2*b.Margin + th
-		b.LockHeight = true
-		b.adjust()
 	}
 
 	if !b.LockWidth {
 		b.Width = 2*b.Margin + tw
-		b.LockWidth = true
-		b.adjust()
 	}
 }
 
@@ -79,10 +77,6 @@ func (b *Button) CenterVer(height int) {
 func (b *Button) CenterHor(width int) {
 	b.X = width/2 - b.Width/2
 	b.adjust()
-}
-
-func (b *Button) Click() {
-	fmt.Printf("clicked: %s\n", b.Text)
 }
 
 func (b *Button) Draw(screen *ebiten.Image) {
