@@ -1,8 +1,6 @@
 package main
 
 import (
-	"carte/ui"
-
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
@@ -17,11 +15,9 @@ type App struct {
 	CurrentScene Scene
 	Scenes       []Scene
 
-	Menu   *ui.Menu
-	Mode   int
-	X      int
-	Y      int
-	Button *ui.Button
+	Mode int
+	X    int
+	Y    int
 }
 
 type Settings struct {

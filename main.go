@@ -50,7 +50,7 @@ func main() {
 		LockWidth: true,
 	}
 
-	app := App{Button: b}
+	app := App{}
 
 	ms := []*ebiten.MonitorType{}
 	ms = ebiten.AppendMonitors(ms)
@@ -62,8 +62,7 @@ func main() {
 		Monitor: ms[0],
 	}
 
-	app.Menu = ui.NewMenu(s, settings.Width, settings.Height)
-	app.CurrentScene = app.Menu
+	app.CurrentScene = ui.NewMenu(s, settings.Width, settings.Height)
 
 	b.Init(gtfs)
 	b.CenterHor(settings.Width)

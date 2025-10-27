@@ -67,6 +67,7 @@ func (b *Button) Init(source *text.GoTextFaceSource) {
 	}
 
 	b.TextFace = tf
+	b.adjust()
 }
 
 func (b *Button) CenterVer(height int) {

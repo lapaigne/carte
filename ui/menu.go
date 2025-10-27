@@ -39,46 +39,36 @@ func (m *Menu) Draw(screen *ebiten.Image) {
 func (m *Menu) Load()   {}
 func (m *Menu) Unload() {}
 
-func NewMenu(src *text.GoTextFaceSource, width, height int) *Menu {
+func NewMenu(src *text.GoTextFaceSource, sWidth, sHeight int) *Menu {
 	m := &Menu{}
 
 	m.Buttons = make([]*Button, 0)
 
 	margin := 10
 	vertSpace := 25
+	w := 400
 
-	m.addButton(&Button{Y: 100, Text: "NEW", Width: 400})
+	m.addButton(&Button{Y: 100, Text: "NEW"})
 	m.addButton(&Button{Text: "LOAD"})
 	m.addButton(&Button{Text: "SETTINGS"})
 
 	exitBtn := &Button{Text: "EXIT"}
 	m.addButton(exitBtn)
 
-	var nw int
-	for _, b := range m.Buttons {
-		b.Init(src)
-		w, _ := b.MinDims()
-		if b.Width > w {
-			w = b.Width
-		}
-		if w > nw {
-			nw = w
-		}
-	}
-
 	for i, b := range m.Buttons {
 		b.Click = func() {
 			fmt.Printf("clicked: %s\n", b.Text)
 		}
 		b.Margin = margin
-		b.Width = nw
+		b.Width = w
 		b.LockWidth = true
 		if i > 0 {
 			prev := m.Buttons[i-1]
 			b.Y = prev.Y + prev.Height + vertSpace
 		}
-		b.adjust()
-		b.CenterHor(width)
+
+		b.Init(src)
+		b.CenterHor(sWidth)
 	}
 
 	exitBtn.Click = func() {
