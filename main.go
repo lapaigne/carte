@@ -3,25 +3,22 @@ package main
 import (
 	"bytes"
 	"carte/ui"
+	"errors"
 	"log"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/examples/resources/fonts"
-	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/hajimehoshi/ebiten/v2/text/v2"
 )
 
 var gtfs *text.GoTextFaceSource
 
 func (a *App) Update() error {
-	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
-		for _, btn := range a.Menu.Buttons {
-			if btn.In(ebiten.CursorPosition()) {
-				btn.Click()
-			}
-		}
+	if a.CurrentScene == nil {
+		return errors.New("current scene is nil")
 	}
 
+	a.CurrentScene.Update()
 	return nil
 }
 
@@ -30,9 +27,11 @@ func (a *App) Layout(outW, outH int) (int, int) {
 }
 
 func (a *App) Draw(screen *ebiten.Image) {
-	for _, btn := range a.Menu.Buttons {
-		btn.Draw(screen)
+	if a.CurrentScene == nil {
+		return
 	}
+
+	a.CurrentScene.Draw(screen)
 }
 
 func main() {
@@ -64,6 +63,7 @@ func main() {
 	}
 
 	app.Menu = ui.NewMenu(s, settings.Width, settings.Height)
+	app.CurrentScene = app.Menu
 
 	b.Init(gtfs)
 	b.CenterHor(settings.Width)

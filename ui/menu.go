@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/hajimehoshi/ebiten/v2/text/v2"
 )
 
@@ -11,10 +13,31 @@ type Menu struct {
 	Buttons []*Button
 }
 
-func (m *Menu) AddButton(b *Button) *Menu {
+func (m *Menu) addButton(b *Button) *Menu {
 	m.Buttons = append(m.Buttons, b)
 	return m
 }
+
+func (m *Menu) Update() error {
+	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
+		for _, b := range m.Buttons {
+			if b.In(ebiten.CursorPosition()) {
+				b.Click()
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *Menu) Draw(screen *ebiten.Image) {
+	for _, b := range m.Buttons {
+		b.Draw(screen)
+	}
+}
+
+func (m *Menu) Load()   {}
+func (m *Menu) Unload() {}
 
 func NewMenu(src *text.GoTextFaceSource, width, height int) *Menu {
 	m := &Menu{}
@@ -24,12 +47,12 @@ func NewMenu(src *text.GoTextFaceSource, width, height int) *Menu {
 	margin := 10
 	vertSpace := 25
 
-	m.AddButton(&Button{Y: 100, Text: "NEW", Width: 400})
-	m.AddButton(&Button{Text: "LOAD"})
-	m.AddButton(&Button{Text: "SETTINGS"})
+	m.addButton(&Button{Y: 100, Text: "NEW", Width: 400})
+	m.addButton(&Button{Text: "LOAD"})
+	m.addButton(&Button{Text: "SETTINGS"})
 
 	exitBtn := &Button{Text: "EXIT"}
-	m.AddButton(exitBtn)
+	m.addButton(exitBtn)
 
 	var nw int
 	for _, b := range m.Buttons {
