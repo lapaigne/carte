@@ -1,5 +1,7 @@
 package math
 
+import "github.com/hajimehoshi/ebiten/v2/vector"
+
 type KeepRat int
 
 const (
@@ -32,4 +34,15 @@ func (p *Projector) ScreenToWorld(screen Vec2) (world Vec2) {
 	world.X = u*(r-l)/w + l
 	world.Y = v*(b-t)/h + r
 	return world
+}
+
+func (p *Projector) ScreenPath(worldPath []Vec2) (screenPath vector.Path) {
+	screenPath.Reset()
+
+	for _, v := range worldPath {
+		s := p.WorldToScreen(v)
+		screenPath.LineTo(s.X, s.Y)
+	}
+
+	return screenPath
 }
