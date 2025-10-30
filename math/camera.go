@@ -1,8 +1,8 @@
 package math
 
 type Camera struct {
-	L int
-	R int
-	T int
-	B int
+	L float32
+	R float32
+	T float32
+	B float32
 }

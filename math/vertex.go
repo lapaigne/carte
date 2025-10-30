@@ -4,7 +4,7 @@ type Vectorer interface {
 	Length() float32
 }
 
-type Vec2Int struct {
-	X int
-	Y int
+type Vec2 struct {
+	X float32
+	Y float32
 }
