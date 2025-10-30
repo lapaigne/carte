@@ -39,6 +39,10 @@ func (m *Menu) Draw(screen *ebiten.Image) {
 func (m *Menu) Load()   {}
 func (m *Menu) Unload() {}
 
+func (m *Menu) Name() string {
+	return "Menu Scene"
+}
+
 func NewMenu(src *text.GoTextFaceSource, sWidth, sHeight int) *Menu {
 	m := &Menu{}
 
