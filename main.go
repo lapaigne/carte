@@ -62,7 +62,13 @@ func main() {
 		Monitor: ms[0],
 	}
 
-	app.CurrentScene = ui.NewMenu(s, settings.Width, settings.Height)
+	menuScene := ui.NewMenu(s, settings.Width, settings.Height)
+	app.Scenes = append(app.Scenes, menuScene)
+
+	mapScene := ui.NewMap()
+	app.Scenes = append(app.Scenes, mapScene)
+
+	app.CurrentScene = app.Scenes[1]
 
 	b.Init(gtfs)
 	b.CenterHor(settings.Width)
