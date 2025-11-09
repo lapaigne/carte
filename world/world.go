@@ -1,7 +1,7 @@
 package world
 
-import "carte/math"
+import "carte/carma"
 
 type World struct {
-	Path []math.Vec2
+	Path []carma.Vec2
 }

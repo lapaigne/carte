@@ -1,4 +1,4 @@
-package math
+package carma
 
 type Vectorer interface {
 	Length() float32

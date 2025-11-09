@@ -1,7 +1,7 @@
 package ui
 
 import (
-	"carte/math"
+	"carte/carma"
 	"carte/world"
 	"image/color"
 	"math/rand"
@@ -12,22 +12,22 @@ import (
 
 type Map struct {
 	Path      vector.Path
-	Projector math.Projector
+	Projector carma.Projector
 	World     *world.World
 	Dotted    bool
 }
 
 func NewMap() *Map {
-	proj := math.Projector{}
-	proj.Camera = &math.Camera{L: -16, R: 16, T: -9, B: 9}
-	proj.Screen = math.Vec2{1280, 720}
+	proj := carma.Projector{}
+	proj.Camera = &carma.Camera{L: -16, R: 16, T: -9, B: 9}
+	proj.Screen = carma.Vec2{1280, 720}
 
 	m := &Map{}
-	m.World = &world.World{Path: []math.Vec2{}}
+	m.World = &world.World{Path: []carma.Vec2{}}
 	m.Projector = proj
 
 	for range 5 {
-		m.World.Path = append(m.World.Path, math.Vec2{
+		m.World.Path = append(m.World.Path, carma.Vec2{
 			X: 10*rand.Float32() - 5,
 			Y: 10*rand.Float32() - 5,
 		})

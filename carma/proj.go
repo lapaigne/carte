@@ -1,6 +1,8 @@
-package math
+package carma
 
-import "github.com/hajimehoshi/ebiten/v2/vector"
+import (
+	"github.com/hajimehoshi/ebiten/v2/vector"
+)
 
 type KeepRat int
 
