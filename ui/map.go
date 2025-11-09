@@ -3,6 +3,7 @@ package ui
 import (
 	"carte/math"
 	"carte/world"
+	"image/color"
 	"math/rand"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -13,6 +14,7 @@ type Map struct {
 	Path      vector.Path
 	Projector math.Projector
 	World     *world.World
+	Dotted    bool
 }
 
 func NewMap() *Map {
@@ -31,6 +33,8 @@ func NewMap() *Map {
 		})
 	}
 	m.Path = m.Projector.ScreenPath(m.World.Path)
+
+	m.Dotted = true
 
 	return m
 }
@@ -54,4 +58,15 @@ func (m *Map) Update() error {
 
 func (m *Map) Draw(screen *ebiten.Image) {
 	vector.StrokePath(screen, &m.Path, &vector.StrokeOptions{Width: 4}, &vector.DrawPathOptions{AntiAlias: false})
+
+	if m.Dotted {
+		xmin, xmax := m.Projector.Camera.L, m.Projector.Camera.R
+		ymin, ymax := m.Projector.Camera.T, m.Projector.Camera.B
+		for i := xmin; i < xmax; i++ {
+			for j := ymin; j < ymax; j++ {
+				s := m.Projector.WorldToScreen(math.Vec2{X: i, Y: j})
+				vector.StrokeCircle(screen, s.X, s.Y, 1, 1, color.White, false)
+			}
+		}
+	}
 }
