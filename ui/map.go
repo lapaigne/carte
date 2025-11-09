@@ -3,17 +3,29 @@ package ui
 import (
 	"carte/carma"
 	"carte/world"
+	"fmt"
 	"image/color"
 	"math/rand"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/hajimehoshi/ebiten/v2/vector"
 )
+
+const (
+	Hand ToolMode = iota
+	Free
+)
+
+type ToolMode int
 
 type Map struct {
 	Path      vector.Path
 	Projector carma.Projector
 	World     *world.World
+	Mode      ToolMode
+	Hand      bool
+	Dragged   bool
 	Dotted    bool
 }
 
@@ -28,12 +40,13 @@ func NewMap() *Map {
 
 	for range 5 {
 		m.World.Path = append(m.World.Path, carma.Vec2{
-			X: 10*rand.Float32() - 5,
-			Y: 10*rand.Float32() - 5,
+			X: float32(rand.Intn(11) - 5),
+			Y: float32(rand.Intn(11) - 5),
 		})
 	}
 	m.Path = m.Projector.ScreenPath(m.World.Path)
 
+	m.Hand = true
 	m.Dotted = true
 
 	return m
@@ -47,10 +60,16 @@ func (m *Map) Name() string {
 }
 
 func (m *Map) Update() error {
-	if _, dy := ebiten.Wheel(); dy != 0 {
-		f := float32(dy) * 0.3
-		m.Projector.Camera.Zoom(f)
-		m.Path = m.Projector.ScreenPath(m.World.Path)
+	if m.Hand {
+		if _, dy := ebiten.Wheel(); dy != 0 {
+			f := float32(dy) * 0.3
+			m.Projector.Camera.Zoom(f)
+			m.Path = m.Projector.ScreenPath(m.World.Path)
+		}
+
+		if ebiten.IsKeyPressed(ebiten.Key(ebiten.MouseButtonLeft)) {
+
+		}
 	}
 
 	return nil
@@ -60,11 +79,13 @@ func (m *Map) Draw(screen *ebiten.Image) {
 	vector.StrokePath(screen, &m.Path, &vector.StrokeOptions{Width: 4}, &vector.DrawPathOptions{AntiAlias: false})
 
 	if m.Dotted {
-		xmin, xmax := m.Projector.Camera.L, m.Projector.Camera.R
-		ymin, ymax := m.Projector.Camera.T, m.Projector.Camera.B
-		for i := xmin; i < xmax; i++ {
-			for j := ymin; j < ymax; j++ {
-				s := m.Projector.WorldToScreen(math.Vec2{X: i, Y: j})
+		xn, xx, yn, yx := m.Projector.Camera.Dims64Rounded()
+		ebitenutil.DebugPrint(screen, fmt.Sprintf("L: %f\tR: %f\tT: %f\tB: %f", xn, xx, yn, yx))
+		a, b, c, d := m.Projector.Camera.Dims32()
+		ebitenutil.DebugPrint(screen, fmt.Sprintf("\nL: %f\tR: %f\tT: %f\tB: %f", a, b, c, d))
+		for i := xn; i <= xx; i++ {
+			for j := yn; j <= yx; j++ {
+				s := m.Projector.WorldToScreen(carma.Vec2{X: float32(i), Y: float32(j)})
 				vector.StrokeCircle(screen, s.X, s.Y, 1, 1, color.White, false)
 			}
 		}
