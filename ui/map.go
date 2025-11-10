@@ -9,6 +9,7 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/hajimehoshi/ebiten/v2/vector"
 )
 
@@ -27,6 +28,7 @@ type Map struct {
 	Hand      bool
 	Dragged   bool
 	Dotted    bool
+	Initial   carma.Vec2
 }
 
 func NewMap() *Map {
@@ -64,14 +66,29 @@ func (m *Map) Update() error {
 		if _, dy := ebiten.Wheel(); dy != 0 {
 			f := float32(dy) * 0.3
 			m.Projector.Camera.Zoom(f)
-			m.Path = m.Projector.ScreenPath(m.World.Path)
 		}
 
-		if ebiten.IsKeyPressed(ebiten.Key(ebiten.MouseButtonLeft)) {
-
+		if m.Dragged {
+			fmt.Println("dragged")
+			if inpututil.IsMouseButtonJustReleased(ebiten.MouseButtonLeft) {
+				m.Dragged = false
+			} else {
+				cur := carma.FromInt(ebiten.CursorPosition())
+				dif := carma.Sub(m.Initial, cur)
+				dif.X *= 1e-3
+				dif.Y *= -1e-3
+				fmt.Println(m.Initial, "\t", dif)
+				m.Projector.Camera.Pan(dif)
+			}
+		} else if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
+			fmt.Println("left down")
+			m.Dragged = true
+			m.Initial = carma.FromInt(ebiten.CursorPosition())
 		}
+
 	}
 
+	m.Path = m.Projector.ScreenPath(m.World.Path)
 	return nil
 }
 

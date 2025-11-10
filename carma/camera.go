@@ -30,8 +30,12 @@ func (c *Camera) Zoom(factor float32) {
 	c.B *= f
 }
 
+// dir is vector in world coords
 func (c *Camera) Pan(dir Vec2) {
-
+	c.L += dir.X
+	c.R += dir.X
+	c.T += dir.Y
+	c.B += dir.Y
 }
 
 func (c Camera) Dims32() (L, R, T, B float32) {
