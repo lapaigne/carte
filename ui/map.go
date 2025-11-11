@@ -46,6 +46,7 @@ func NewMap() *Map {
 			Y: float32(rand.Intn(11) - 5),
 		})
 	}
+
 	m.Path = m.Projector.ScreenPath(m.World.Path)
 
 	m.Hand = true
@@ -77,6 +78,24 @@ func (m *Map) Update() error {
 				m.Dragged = false
 			}
 		}
+
+		move := carma.Vec2{}
+
+		if ebiten.IsKeyPressed(ebiten.KeyArrowRight) {
+			move.X = 1
+		}
+		if ebiten.IsKeyPressed(ebiten.KeyArrowLeft) {
+			move.X = -1
+		}
+		if ebiten.IsKeyPressed(ebiten.KeyArrowUp) {
+			move.Y = 1
+		}
+		if ebiten.IsKeyPressed(ebiten.KeyArrowDown) {
+			move.Y = -1
+		}
+
+		m.Projector.Camera.Pan(move)
+
 		if _, dy := ebiten.Wheel(); dy != 0 {
 			f := float32(dy) * 0.3
 			m.Projector.Camera.Zoom(f)
@@ -86,7 +105,6 @@ func (m *Map) Update() error {
 			m.Dragged = true
 			m.Initial = carma.FromInt(ebiten.CursorPosition())
 		}
-
 	}
 
 	m.Path = m.Projector.ScreenPath(m.World.Path)
