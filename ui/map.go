@@ -63,25 +63,26 @@ func (m *Map) Name() string {
 
 func (m *Map) Update() error {
 	if m.Hand {
+		if m.Dragged {
+			cur := carma.FromInt(ebiten.CursorPosition())
+			curs := m.Projector.ScreenToWorld(cur)
+			inits := m.Projector.ScreenToWorld(m.Initial)
+			pan := carma.Sub(inits, curs)
+
+			m.Initial = cur
+
+			m.Projector.Camera.Pan(pan)
+
+			if inpututil.IsMouseButtonJustReleased(ebiten.MouseButtonLeft) {
+				m.Dragged = false
+			}
+		}
 		if _, dy := ebiten.Wheel(); dy != 0 {
 			f := float32(dy) * 0.3
 			m.Projector.Camera.Zoom(f)
 		}
 
-		if m.Dragged {
-			fmt.Println("dragged")
-			if inpututil.IsMouseButtonJustReleased(ebiten.MouseButtonLeft) {
-				m.Dragged = false
-			} else {
-				cur := carma.FromInt(ebiten.CursorPosition())
-				dif := carma.Sub(m.Initial, cur)
-				dif.X *= 1e-3
-				dif.Y *= -1e-3
-				fmt.Println(m.Initial, "\t", dif)
-				m.Projector.Camera.Pan(dif)
-			}
-		} else if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
-			fmt.Println("left down")
+		if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
 			m.Dragged = true
 			m.Initial = carma.FromInt(ebiten.CursorPosition())
 		}
@@ -97,9 +98,7 @@ func (m *Map) Draw(screen *ebiten.Image) {
 
 	if m.Dotted {
 		xn, xx, yn, yx := m.Projector.Camera.Dims64Rounded()
-		ebitenutil.DebugPrint(screen, fmt.Sprintf("L: %f\tR: %f\tT: %f\tB: %f", xn, xx, yn, yx))
-		a, b, c, d := m.Projector.Camera.Dims32()
-		ebitenutil.DebugPrint(screen, fmt.Sprintf("\nL: %f\tR: %f\tT: %f\tB: %f", a, b, c, d))
+		ebitenutil.DebugPrint(screen, fmt.Sprintf("L: %.3f\tR: %.3f\tT: %.3f\tB: %.3f", xn, xx, yn, yx))
 		for i := xn; i <= xx; i++ {
 			for j := yn; j <= yx; j++ {
 				s := m.Projector.WorldToScreen(carma.Vec2{X: float32(i), Y: float32(j)})
