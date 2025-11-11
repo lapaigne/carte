@@ -20,21 +20,21 @@ type Projector struct {
 
 func (p *Projector) WorldToScreen(world Vec2) (screen Vec2) {
 	w, h := p.Screen.X, p.Screen.Y
-	u, v := world.X, world.Y
+	wx, wy := world.X, world.Y
 	l, r, t, b := p.Camera.L, p.Camera.R, p.Camera.T, p.Camera.B
 
-	screen.X = (w / (l - r)) * (l - u)
-	screen.Y = (h / (b - t)) * (b - v)
+	screen.X = (w / (l - r)) * (l - wx)
+	screen.Y = (h / (b - t)) * (b - wy)
 	return screen
 }
 
 func (p *Projector) ScreenToWorld(screen Vec2) (world Vec2) {
 	w, h := p.Screen.X, p.Screen.Y
-	u, v := screen.X, screen.Y
+	sx, sy := screen.X, screen.Y
 	l, r, t, b := p.Camera.L, p.Camera.R, p.Camera.T, p.Camera.B
 
-	world.X = u*(r-l)/w + l
-	world.Y = v*(b-t)/h + r
+	world.X = sx*(r-l)/w + l
+	world.Y = sy*(t-b)/h + b
 	return world
 }
 
